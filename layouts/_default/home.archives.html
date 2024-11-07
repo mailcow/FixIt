@@ -1,24 +1,23 @@
 {{- define "title" -}}
-  {{- title (.Params.Title | default ((T .Section) | default .Section | dict "Some" | T "allSome")) -}}
+  {{- .Params.Title | default (T "archives") -}}
   {{- if .Site.Params.withSiteTitle }} {{ .Site.Params.titleDelimiter }} {{ .Site.Title }}{{- end -}}
 {{- end -}}
 
 {{- define "content" -}}
+  {{- /* All Posts */ -}}
+  {{- $pages := .Scratch.Get "mainSectionPages" -}}
+
   <div class="page archive">
     <div class="header">
       {{- /* Title */ -}}
       <h1 class="single-title animate__animated animate__pulse animate__faster">
-        {{- $titleIcon := "fa-solid fa-feather" -}}
-        {{- with .Params.titleIcon -}}
-          {{- $titleIcon = . -}}
-        {{- end -}}
-        {{- dict "Class" (add $titleIcon " fa-fw me-1") | partial "plugin/icon.html" -}}
-        {{- title (.Params.Title | default ((T .Section) | default .Section | dict "Some" | T "allSome")) }} <sup>{{ .Pages.Len }}</sup>
+        {{- dict "Class" "fa-solid fa-box-archive fa-fw me-1" | partial "plugin/icon.html" -}}
+        {{- .Params.Title | default (T "archives") }} <sup>{{ $pages.Len }}</sup>
       </h1>
       {{- /* Total word count */ -}}
       {{- /* See https://github.com/hugo-fixit/FixIt/issues/124 */ -}}
       {{- $localData := newScratch -}}
-      {{- range .Pages -}}
+      {{- range $pages -}}
         {{- $localData.Add "totalWordCount" .WordCount -}}
       {{- end -}}
       {{- with ($localData.Get "totalWordCount") -}}
@@ -33,9 +32,9 @@
     </div>
 
     {{- /* Paginate */ -}}
-    {{- if .Pages -}}
-      {{- $pages := .Pages.GroupByDate "2006" -}}
-      {{- with .Site.Params.section.paginate | default .Site.Params.paginate -}}
+    {{- if $pages -}}
+      {{- $pages = $pages.GroupByDate "2006" -}}
+      {{- with .Site.Params.archives.paginate | default .Site.Params.paginate -}}
         {{- $pages = $.Paginate $pages . -}}
       {{- else -}}
         {{- $pages = .Paginate $pages -}}
@@ -53,10 +52,11 @@
               {{- if eq $repost.enable true -}}
                 {{- dict "Class" "fa-solid fa-share fa-fw text-success me-1" | partial "plugin/icon.html" -}}
               {{- end -}}
-              {{- title .LinkTitle -}}
+              {{- /* Use the original title after archiving the articles */ -}}
+              {{- cond (.Param "capitalizeTitles") (title .Title) .Title -}}
             </a>
             <span class="archive-item-date" title='{{ "2006-01-02 15:04:05" | .Date.Format }}'>
-              {{- .Date | dateFormat ($.Site.Params.section.dateFormat | default "01-02") -}}
+              {{- .Date | dateFormat ($.Site.Params.archives.dateFormat | default "01-02") -}}
             </span>
           </article>
         {{- end -}}
