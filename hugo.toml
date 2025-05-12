@@ -34,6 +34,8 @@ enableRobotsTXT = true
 enableGitInfo = true
 # whether to use emoji code
 enableEmoji = true
+# the main sections of a site
+mainSections = []
 
 # -------------------------------------------------------------------------------------
 # Menu Configuration
@@ -135,7 +137,7 @@ enableEmoji = true
 [module]
   [module.hugoVersion]
     extended = true
-    min = "0.134.1"
+    min = "0.146.0"
 
 # -------------------------------------------------------------------------------------
 # Markup related configuration in Hugo
@@ -178,8 +180,13 @@ enableEmoji = true
           enable = true
         [markup.goldmark.extensions.extras.superscript]
           enable = true
-    # TODO passthrough refactor https://gohugo.io/getting-started/configuration-markup/#parserattributeblock
+    # TODO passthrough refactor https://gohugo.io/render-hooks/passthrough/
     # TODO hugo 0.122.0 https://gohugo.io/content-management/mathematics/
+    # [markup.goldmark.extensions.passthrough]
+    #   enable = true
+    #   [markup.goldmark.extensions.passthrough.delimiters]
+    #     block = [['\[', '\]'], ['$$', '$$']]
+    #     inline = [['\(', '\)'], ['$', '$']]
     [markup.goldmark.parser]
       [markup.goldmark.parser.attribute]
         block = true
@@ -384,7 +391,7 @@ enableEmoji = true
   # Search config
   [params.search]
     enable = false
-    # type of search engine ["algolia", "fuse"]
+    # type of search engine ["algolia", "fuse", "cse", "post-chat"]
     type = "fuse"
     # max index length of the chunked content
     contentLength = 4000
@@ -413,6 +420,19 @@ enableEmoji = true
       ignoreLocation = false
       useExtendedSearch = false
       ignoreFieldNorm = false
+
+  # FixIt 0.3.16 | NEW Custom Search Engine (CSE)
+  [params.cse]
+    # Search Engine: ["google", "bing"]
+    engine = ""
+    # Search results page URL (layout: search)
+    resultsPage = "/search/"
+    # Google: https://programmablesearchengine.google.com/
+    # Google Custom Search Engine Context
+    [params.cse.google]
+      cx = ""
+    # Bing (Unsupported): https://www.customsearch.ai/
+    [params.cse.bing]
 
   # Header config
   [params.header]
@@ -653,6 +673,7 @@ enableEmoji = true
     Douyin = ""
     TikTok = ""
     Credly = ""
+    Bluesky = ""
     Phone = ""
     Email = ""
     RSS = true
@@ -694,6 +715,13 @@ enableEmoji = true
   # syntax: <sign> = <icon>
   [params.taskList]
     # tip = "fa-regular fa-lightbulb"
+
+  # FixIt 0.3.15 | NEW version shortcode config
+  [params.repoVersion]
+    # url prefix for the release tag
+    url = "https://github.com/hugo-fixit/FixIt/releases/tag/v"
+    # project name
+    name = "FixIt"
 
   # FixIt 0.2.12 | NEW PanguJS config
   [params.pangu]
@@ -765,6 +793,31 @@ enableEmoji = true
       id = ""
       # server url for your tracker if you're self hosting
       server = ""
+    # FixIt 0.3.16 | NEW Baidu Analytics
+    [params.analytics.baidu]
+      id = ""
+    # FixIt 0.3.16 | NEW Umami Analytics
+    [params.analytics.umami]
+      data_website_id = ""
+      src = ""
+      data_host_url = ""
+      data_domains = ""
+    # FixIt 0.3.16 | NEW Plausible Analytics
+    [params.analytics.plausible]
+      data_domain = ""
+      src = ""
+    # FixIt 0.3.16 | NEW Cloudflare Analytics
+    [params.analytics.cloudflare]
+      token = ""
+    # FixIt 0.3.16 | NEW Splitbee Analytics
+    [params.analytics.splitbee]
+      enable = false
+      # no cookie mode
+      no_cookie = true
+      # respect the do not track setting of the browser
+      do_not_track = true
+      # token(optional), more info on https://splitbee.io/docs/embed-the-script
+      data_token = ""
 
   # Cookie consent config
   [params.cookieconsent]
@@ -784,7 +837,8 @@ enableEmoji = true
 
   # Compatibility config
   [params.compatibility]
-    # whether to use Polyfill.io to be compatible with older browsers
+    # whether to use Polyfill.io on cdnjs to be compatible with older browsers
+    # https://cdnjs.cloudflare.com/polyfill
     polyfill = false
     # whether to use object-fit-images to be compatible with older browsers
     objectFit = false
@@ -834,6 +888,53 @@ enableEmoji = true
     # "corner-indicator", "fill-left", "flash", "flat-top", "loading-bar", "mac-osx", "material", "minimal"]
     theme = "minimal"
   
+  # FixIt 0.3.17 | NEW PostChat AI config
+  # Based on your posts to build a knowledge base, support AI summary, AI search, and AI Chatbot.
+  # Get PostChat Key from my invitation link, thanks for your support!
+  # https://ai.tianli0.top/?InviteID=IRE1S88Z
+  [params.postChat]
+    enable = false
+    key = ""
+    # How users initiate chats: ["iframe", "magic"]
+    userMode = "iframe"
+    addButton = true
+    defaultInput = false
+    left = ""
+    bottom = ""
+    width = ""
+    height = ""
+    fill = ""
+    backgroundColor = ""
+    upLoadWeb = true
+    showInviteLink = true
+    userTitle = ""
+    userDesc = ""
+    # dom container to be blacked out, e.g. [".aplayer"]
+    blackDom = []
+    # Only for iframe mode
+    frameWidth = ""     # e.g. "375px"
+    frameHeight = ""    # e.g. "600px"
+    # only for magic mode
+    userIcon = ""
+    defaultChatQuestions = []
+    defaultSearchQuestions = []
+
+  # FixIt 0.3.17 | NEW Summary AI config
+  # See https://postchat.zhheo.com/summary.html
+  [params.postSummary]
+    enable = false
+    # If you set `params.postChat.key`, you don't need to set `params.postSummary.key`
+    key = ""
+    title = ""
+    # themes options: ["", "simple", "yanzhi"]
+    theme = ""
+    postURL = ""
+    blacklist = ""
+    wordLimit = 1000
+    typingAnimate = true
+    beginningText = ""
+    loadingText = true
+
   # FixIt 0.3.10 | NEW Global Feed config for RSS, Atom and JSON feed.
   [params.feed]
     # The number of posts to include in the feed. If set to -1, all posts.
@@ -844,18 +945,31 @@ enableEmoji = true
     [params.feed.follow]
       feedId = ""
       userId = ""
+  
+  # FixIt 0.3.17 | NEW Image config
+  [params.image]
+    # cache remote images for better optimisations
+    cacheRemote = false
+    # Image resizing and optimisation
+    optimise = false
 
   # FixIt 0.3.12 | NEW Custom partials config
   # Custom partials must be stored in the /layouts/partials/ directory.
   # Depends on open custom blocks https://fixit.lruihao.cn/references/blocks/
   [params.customPartials]
     head = []
+    menuDesktop = []
+    menuMobile = []
     profile = []
     aside = []
     comment = []
     footer = []
     widgets = []
     assets = []
+    postTocBefore = []
+    postTocAfter = []
+    postContentBefore = []
+    postContentAfter = []
     postFooterBefore = []
     postFooterAfter = []
 
@@ -901,6 +1015,8 @@ enableEmoji = true
     linkToEdit = true
     # FixIt 0.3.0 | NEW whether to show link to report issue for the post
     linkToReport = true
+    # FixIt 0.3.20 | NEW whether to show link to view the post in VSCode
+    linkToVscode = true
     # FixIt 0.3.10 | CHANGED Page style ["narrow", "normal", "wide", ...]
     pageStyle = "normal"
     # FixIt 0.2.17 | CHANGED Auto Bookmark Support
@@ -1002,15 +1118,12 @@ enableEmoji = true
       scale = true
       # whether to add FullscreenControl
       fullscreen = true
-    # FixIt 0.3.0 | NEW [Experimental] cache remote images locally, see: https://github.com/hugo-fixit/FixIt/pull/362
-    [params.page.cacheRemoteImages]
-      enable = false
-      # replace remote image url with local image url (place in public/images/remote/)
-      replace = false
     # FixIt 0.3.0 | NEW Related content config (https://gohugo.io/content-management/related/)
     [params.page.related]
       enable = false
       count = 5
+      # FixIt 0.3.20 | NEW position of related content, optional values: ["aside", "footer"]
+      position = ["aside", "footer"]
     # FixIt 0.2.17 | NEW Donate (Sponsor) settings
     [params.page.reward]
       enable = false
@@ -1100,8 +1213,8 @@ enableEmoji = true
         appKey = ""
         placeholder = ""
         avatar = "mp"
-        meta = ""
-        requiredFields = ""
+        meta = ['nick','mail','link']
+        requiredFields = []
         pageSize = 10
         lang = ""
         visitor = true
